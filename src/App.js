@@ -5,8 +5,20 @@ import Routes from "./Routes";
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import Container from 'react-bootstrap/Container';
-
+import * as firebase from 'firebase';
 import './App.css';
+
+var config = {
+  apiKey: "AIzaSyCPStqxcPsPyizC8PUUiyv66Uz99Djj3gM",
+  authDomain: "time-left-on-stuff.firebaseapp.com",
+  databaseURL: "https://time-left-on-stuff.firebaseio.com",
+  projectId: "time-left-on-stuff",
+  storageBucket: "time-left-on-stuff.appspot.com",
+  messagingSenderId: "984522414547",
+  appId: "1:984522414547:web:4e56214eda18163e7ff726",
+  measurementId: "G-SG97NW5LBM"
+};
+firebase.initializeApp(config);
 
 class App extends Component {
   render() {
@@ -23,8 +35,8 @@ class App extends Component {
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
               <Nav className="mr-auto">
-                <LinkContainer to="/">
-                  <Nav.Link>Home</Nav.Link>
+                <LinkContainer to="/tasks">
+                  <Nav.Link>Tasks</Nav.Link>
                 </LinkContainer>
                 <LinkContainer to="/about">
                   <Nav.Link>About</Nav.Link>
