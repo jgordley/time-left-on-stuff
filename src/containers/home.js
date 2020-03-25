@@ -18,8 +18,12 @@ export default class Home extends Component {
 
   signIn = (event) => {
     event.preventDefault();
+    let self = this;
     // Sign into Firebase using popup auth & Google as the identity provider.
-    firebase.auth().signInWithEmailAndPassword(this.state.emailInput, this.state.passwordInput).catch(function(error) {
+    firebase.auth().signInWithEmailAndPassword(this.state.emailInput, this.state.passwordInput).then(function() {
+      console.log('signed in!');
+      self.props.history.push('/tasks');
+    }).catch(function(error) {
       // Handle Errors here.
       var errorCode = error.code;
       var errorMessage = error.message;

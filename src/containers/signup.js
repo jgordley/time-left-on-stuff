@@ -16,17 +16,18 @@ export default class SignUp extends Component {
 
     signUp = (event) => {
         event.preventDefault();
-        firebase.auth().createUserWithEmailAndPassword(this.state.emailInput, this.state.passwordInput).then(function() {
+        firebase.auth().createUserWithEmailAndPassword(this.state.emailInput, this.state.passwordInput).then(function () {
             // Signup successful.
             var user = firebase.auth().currentUser;
             let data = {
-                sample_task: {
-                    name: 'do something with your life',
-                    time: 20
-                }
-              };
+                isActive: false,
+                name: 'Workout',
+                time: 20*60,
+                timeRemaining: 15*60,
+                color: 'blue'
+            };
             firebase.firestore().collection('users').doc(user.uid).collection('tasks').add(data);
-        }).catch(function(error) {
+        }).catch(function (error) {
             // Handle Errors here.
             var errorCode = error.code;
             var errorMessage = error.message;
@@ -36,15 +37,15 @@ export default class SignUp extends Component {
     }
 
     handleChange = (event) => {
-        this.setState({[event.target.id]: event.target.value});
+        this.setState({ [event.target.id]: event.target.value });
     }
 
     render() {
         return (
             <Container>
-                <h2 style={{paddingTop:'100px'}}>Sign Up</h2>
+                <h2 style={{ paddingTop: '100px' }}>Sign Up</h2>
                 <hr></hr>
-                <Form onSubmit={this.signUp} style={{maxWidth: '300px'}}>
+                <Form onSubmit={this.signUp} style={{ maxWidth: '300px' }}>
                     <Form.Group>
                         <Form.Label>Email address</Form.Label>
                         <Form.Control id="emailInput" onChange={this.handleChange} type="email" placeholder="Enter email" />
