@@ -218,15 +218,15 @@ export default class Tasks extends Component {
             formatString += String(hoursLeft) + ':';
             if (formatMinutes < 10) {
                 formatString += '0' + String(formatMinutes)
-                if (secondsLeft === 0) {
-                    formatString += ':00';
+                if (secondsLeft < 10) {
+                    formatString += ':0'+String(secondsLeft);
                 } else {
                     formatString += ':' + String(secondsLeft);
                 }
             } else {
                 formatString += String(formatMinutes);
-                if (secondsLeft === 0) {
-                    formatString += ':00';
+                if (secondsLeft < 10) {
+                    formatString += ':0'+String(secondsLeft);
                 } else {
                     formatString += ':' + String(secondsLeft);
                 }
