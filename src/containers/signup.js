@@ -21,10 +21,11 @@ export default class SignUp extends Component {
             var user = firebase.auth().currentUser;
             let data = {
                 isActive: false,
-                name: 'Workout',
-                time: 20*60,
-                timeRemaining: 15*60,
-                color: 'blue'
+                name: 'Create my first task!',
+                time: 60,
+                timeRemaining: 60,
+                finished: false,
+                color: '#ff7675'
             };
             firebase.firestore().collection('users').doc(user.uid).collection('tasks').add(data);
         }).catch(function (error) {
