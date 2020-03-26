@@ -232,8 +232,8 @@ export default class Tasks extends Component {
                 }
             }
         } else {
-            if (secondsLeft === 0) {
-                formatString += String(formatMinutes) + ':00';
+            if (secondsLeft < 10) {
+                formatString += String(formatMinutes) + ':0' + String(secondsLeft);
             } else {
                 formatString += String(formatMinutes) + ':' + String(secondsLeft);
             }
