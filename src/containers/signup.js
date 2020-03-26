@@ -3,6 +3,7 @@ import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import * as firebase from 'firebase';
+import RiseLoader from "react-spinners/ClipLoader";
 
 export default class SignUp extends Component {
 
@@ -10,12 +11,17 @@ export default class SignUp extends Component {
         super();
         this.state = {
             emailInput: null,
-            passwordInput: null
+            passwordInput: null,
+            isLoading: false
         }
     }
 
     signUp = (event) => {
         event.preventDefault();
+        let self = this;
+        this.setState({
+            isLoading: true
+        });
         firebase.auth().createUserWithEmailAndPassword(this.state.emailInput, this.state.passwordInput).then(function () {
             // Signup successful.
             var user = firebase.auth().currentUser;
@@ -27,14 +33,17 @@ export default class SignUp extends Component {
                 finished: false,
                 color: '#ff7675'
             };
+            self.setState({
+                isLoading: false
+            });
             firebase.firestore().collection('users').doc(user.uid).collection('tasks').add(data);
+            self.props.history.push('/tasks');
         }).catch(function (error) {
             // Handle Errors here.
             var errorCode = error.code;
             var errorMessage = error.message;
             console.log(errorCode, errorMessage);
         });
-        this.props.history.push("/tasks");
     }
 
     handleChange = (event) => {
@@ -59,7 +68,11 @@ export default class SignUp extends Component {
                         <Form.Control id="passwordInput" onChange={this.handleChange} type="password" placeholder="Password" />
                     </Form.Group>
                     <Button variant="primary" type="submit">
-                        Submit
+                        {!this.state.isLoading ? 
+                        'Submit' :
+                        <RiseLoader
+                            color={"white"}
+                        />}
                     </Button>
                 </Form>
             </Container>

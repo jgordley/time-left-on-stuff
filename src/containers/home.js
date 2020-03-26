@@ -4,26 +4,34 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { LinkContainer } from "react-router-bootstrap"
 import * as firebase from 'firebase';
+import RiseLoader from "react-spinners/ClipLoader";
 
 export default class Home extends Component {
 
   constructor() {
     super();
     this.state = {
-        emailInput: null,
-        passwordInput: null,
-        loginOrSignup: true
+      emailInput: null,
+      passwordInput: null,
+      loginOrSignup: true,
+      isLoading: false
     }
   }
 
   signIn = (event) => {
     event.preventDefault();
+    this.setState({
+      isLoading: true
+    });
     let self = this;
     // Sign into Firebase using popup auth & Google as the identity provider.
-    firebase.auth().signInWithEmailAndPassword(this.state.emailInput, this.state.passwordInput).then(function() {
+    firebase.auth().signInWithEmailAndPassword(this.state.emailInput, this.state.passwordInput).then(function () {
       console.log('signed in!');
+      self.setState({
+        isLoading: true
+      });
       self.props.history.push('/tasks');
-    }).catch(function(error) {
+    }).catch(function (error) {
       // Handle Errors here.
       var errorCode = error.code;
       var errorMessage = error.message;
@@ -38,7 +46,7 @@ export default class Home extends Component {
   }
 
   handleChange = (event) => {
-    this.setState({[event.target.id]: event.target.value});
+    this.setState({ [event.target.id]: event.target.value });
   }
   handleSignupChange = (event) => {
     this.setState({
@@ -48,7 +56,7 @@ export default class Home extends Component {
 
   renderLogin() {
     return (
-      <Form onSubmit={this.signIn} style={{maxWidth:'300px'}}>
+      <Form onSubmit={this.signIn} style={{ maxWidth: '300px' }}>
         <Form.Group>
           <Form.Label>Email address</Form.Label>
           <Form.Control id="emailInput" onChange={this.handleChange} type="email" placeholder="Enter email" />
@@ -58,7 +66,11 @@ export default class Home extends Component {
           <Form.Control id="passwordInput" onChange={this.handleChange} type="password" placeholder="Password" />
         </Form.Group>
         <Button variant="primary" type="submit">
-          Submit
+          {!this.state.isLoading ?
+            'Log In' :
+            <RiseLoader
+              color={"white"}
+            />}
         </Button>
       </Form>
     );
@@ -67,9 +79,9 @@ export default class Home extends Component {
   render() {
     return (
       <Container>
-        <h2 style={{paddingTop: '100px'}}>Login</h2>
+        <h2 style={{ paddingTop: '100px' }}>Login</h2>
         <hr></hr>
-        { this.state.loginOrSignup ? this.renderLogin() : null }
+        {this.state.loginOrSignup ? this.renderLogin() : null}
         <br></br>
         <p>or <LinkContainer to="/signup"><a href="index.html">sign up</a></LinkContainer></p>
       </Container>

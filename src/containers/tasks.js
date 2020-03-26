@@ -6,8 +6,6 @@ import "react-step-progress-bar/styles.css";
 import { ProgressBar } from "react-step-progress-bar";
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import { FaPlay, FaPause, FaTimesCircle, FaRedo } from 'react-icons/fa';
 import * as firebase from 'firebase';
 
@@ -26,7 +24,7 @@ export default class Tasks extends Component {
             stopTasks: false,
             removeTasks: false,
             color: '#ff7675',
-            colors: ['#ff7675', '#fdcb6e', '#55efc4', '#74b9ff','#a29bfe','#2d3436']
+            colors: ['#ff7675', '#fdcb6e', '#55efc4', '#74b9ff', '#a29bfe', '#2d3436']
         }
     }
 
@@ -40,7 +38,7 @@ export default class Tasks extends Component {
 
     updateActive = (taskToActivate, taskActiveStatus) => {
         var user = firebase.auth().currentUser;
-        if(this.state[taskToActivate].finished) {
+        if (this.state[taskToActivate].finished) {
             let data = {
                 isActive: false,
                 finished: false,
@@ -59,11 +57,11 @@ export default class Tasks extends Component {
 
     syncTimesForActives() {
         var user = firebase.auth().currentUser;
-        for(let i=0; i<this.state.tasks.length;i++) {
+        for (let i = 0; i < this.state.tasks.length; i++) {
             let id = this.state.tasks[i].id;
             let task = this.state[id];
-            if(task.isActive) {
-                firebase.firestore().collection('users').doc(user.uid).collection('tasks').doc(id).update(this.state[id]); 
+            if (task.isActive) {
+                firebase.firestore().collection('users').doc(user.uid).collection('tasks').doc(id).update(this.state[id]);
             }
         }
     }
@@ -75,18 +73,18 @@ export default class Tasks extends Component {
     }
 
     updateActiveTimers = () => {
-        for(let i=0; i<this.state.tasks.length;i++) {
+        for (let i = 0; i < this.state.tasks.length; i++) {
             let id = this.state.tasks[i].id;
             let task = this.state[id];
-            let newTimeRemaining = task.timeRemaining-1;
+            let newTimeRemaining = task.timeRemaining - 1;
 
-            if(task.isActive) {
+            if (task.isActive) {
                 let decrementedTask = {
                     timeRemaining: newTimeRemaining,
                     name: task.name,
                     color: task.color,
                     isActive: task.isActive,
-                    time: task.time, 
+                    time: task.time,
                     finished: task.finished
                 }
                 this.setState({
@@ -94,7 +92,7 @@ export default class Tasks extends Component {
                 });
             }
 
-            if(task.timeRemaining<0) {
+            if (task.timeRemaining < 0) {
                 alert('Times up for ' + task.name);
                 let finishedTask = {
                     timeRemaining: 0,
@@ -109,13 +107,13 @@ export default class Tasks extends Component {
                 })
                 var user = firebase.auth().currentUser;
                 firebase.firestore().collection('users').doc(user.uid).collection('tasks').doc(id).update(finishedTask);
-                
+
             }
         }
     }
 
     colorChange = (event) => {
-        if(event.target.checked) {
+        if (event.target.checked) {
             this.setState({
                 color: event.target.id
             })
@@ -129,16 +127,16 @@ export default class Tasks extends Component {
         let data = {
             isActive: false,
             name: this.state.taskName,
-            time: this.state.taskTime*60,
-            timeRemaining: this.state.taskTime*60,
+            time: this.state.taskTime * 60,
+            timeRemaining: this.state.taskTime * 60,
             color: this.state.color,
             finished: false
         };
         var user = firebase.auth().currentUser;
         // TODO: CATCH ERRORS FOR THIS UPLOAD
-        firebase.firestore().collection('users').doc(user.uid).collection('tasks').add(data)        
+        firebase.firestore().collection('users').doc(user.uid).collection('tasks').add(data)
         console.log('Task added');
-        this.setState({show: false});
+        this.setState({ show: false });
     }
 
     removeTask = (id) => {
@@ -156,9 +154,9 @@ export default class Tasks extends Component {
 
     componentDidMount() {
         var user = firebase.auth().currentUser;
-        this.repeatingTimer = setInterval(() => { 
+        this.repeatingTimer = setInterval(() => {
             this.updateActiveTimers();
-          }, 1000);
+        }, 1000);
         if (user) {
             console.log('Current User: ' + user.email, 'User UID: ' + user.uid);
             let self = this;
@@ -211,86 +209,79 @@ export default class Tasks extends Component {
     }
 
     formatTime(seconds) {
-        let secondsLeft = seconds%60;
-        let minutesLeft = (seconds-secondsLeft)/(60);
-        let formatMinutes = minutesLeft%60;
-        let hoursLeft = (minutesLeft-formatMinutes)/60;
+        let secondsLeft = seconds % 60;
+        let minutesLeft = (seconds - secondsLeft) / (60);
+        let formatMinutes = minutesLeft % 60;
+        let hoursLeft = (minutesLeft - formatMinutes) / 60;
         let formatString = ''
-        if(hoursLeft>0) {
-            formatString+=String(hoursLeft)+':';
-            if(formatMinutes<10) {
-                formatString+='0'+String(formatMinutes)
-                if(secondsLeft === 0) {
+        if (hoursLeft > 0) {
+            formatString += String(hoursLeft) + ':';
+            if (formatMinutes < 10) {
+                formatString += '0' + String(formatMinutes)
+                if (secondsLeft === 0) {
                     formatString += ':00';
                 } else {
-                    formatString += ':'+String(secondsLeft);
+                    formatString += ':' + String(secondsLeft);
                 }
             } else {
-                formatString+=String(formatMinutes);
-                if(secondsLeft === 0) {
+                formatString += String(formatMinutes);
+                if (secondsLeft === 0) {
                     formatString += ':00';
                 } else {
-                    formatString += ':'+String(secondsLeft);
+                    formatString += ':' + String(secondsLeft);
                 }
             }
         } else {
-            if(secondsLeft === 0) {
-                formatString += String(formatMinutes)+':00';
+            if (secondsLeft === 0) {
+                formatString += String(formatMinutes) + ':00';
             } else {
-                formatString += String(formatMinutes)+':'+String(secondsLeft);
+                formatString += String(formatMinutes) + ':' + String(secondsLeft);
             }
         }
 
-        
-        
+
+
         return formatString;
-    } 
+    }
 
 
 
     render() {
         return (
-            <Container style={{textAlign:'center'}}>
-                <h1 style={{margin: '20px'}}>Your Tasks</h1>
-                <Row style={{ marginLeft: '50px', marginRight:'50px', marginBottom: '15px'}}>
-                    {this.state.tasks ? this.state.tasks.map((task, idx) =>
-                        <ListGroup horizontal key={task.id} style={{ margin: 'auto', marginBottom:'25px'}}>
-                            <ListGroup.Item action onClick={() => this.updateActive(task.id, task.isActive, idx)} variant="primary" style={{ width: '50px' }}>
-                                {task.finished ? 
-                                 <FaRedo /> : task.isActive ? <FaPause /> : <FaPlay />}
-                            </ListGroup.Item>
-                            <ListGroup.Item style={{ width: '200px' }}>{task.name}</ListGroup.Item>
-                            <ListGroup.Item style={{ width: '100px' }}>{this.formatTime(this.state[task.id].timeRemaining)}</ListGroup.Item>
-                            <ListGroup.Item style={{ width: '400px' }}>
-                                <ProgressBar
-                                    percent={this.state[task.id].timeRemaining/task.time*100}
-                                    // filledBackground={"linear-gradient(to right, white, " + task.color + ")"}
-                                    filledBackground={task.color}
-                                    style={{margin: 'auto'}}
-                                />
-                            </ListGroup.Item>
-                            <ListGroup.Item style={{ width: '100px' }}>{this.formatTime(this.state[task.id].time)}</ListGroup.Item>
-                            {this.state.removeTasks ? 
-                                <ListGroup.Item action id={task.id} onClick={() => this.removeTask(task.id)} variant="danger" style={{ width: '50px' }}>
-                                    <FaTimesCircle />
-                                </ListGroup.Item> : null }
-                        </ListGroup>
-                    ) : null}
-                </Row>
+            <Container style={{ textAlign: 'center' }}>
+                <h1 style={{ margin: '20px' }}>Your Tasks</h1>
+                {this.state.tasks ? this.state.tasks.map((task, idx) =>
+                    <ListGroup className="justify-content-center" horizontal key={task.id} style={{ margin: 'auto', marginBottom: '25px' }}>
+                        <ListGroup.Item action onClick={() => this.updateActive(task.id, task.isActive, idx)} variant="primary" style={{ width: '50px' }}>
+                            {task.finished ?
+                                <FaRedo /> : task.isActive ? <FaPause /> : <FaPlay />}
+                        </ListGroup.Item>
+                        <ListGroup.Item style={{ width: '200px' }}>{task.name}</ListGroup.Item>
+                        <ListGroup.Item style={{ width: '100px' }}>{this.formatTime(this.state[task.id].timeRemaining)}</ListGroup.Item>
+                        <ListGroup.Item style={{ width: '400px' }}>
+                            <ProgressBar
+                                percent={this.state[task.id].timeRemaining / task.time * 100}
+                                // filledBackground={"linear-gradient(to right, white, " + task.color + ")"}
+                                filledBackground={task.color}
+                                style={{ margin: 'auto' }}
+                            />
+                        </ListGroup.Item>
+                        <ListGroup.Item style={{ width: '100px' }}>{this.formatTime(this.state[task.id].time)}</ListGroup.Item>
+                        {this.state.removeTasks ?
+                            <ListGroup.Item action id={task.id} onClick={() => this.removeTask(task.id)} variant="danger" style={{ width: '50px' }}>
+                                <FaTimesCircle />
+                            </ListGroup.Item> : null}
+                    </ListGroup>
+                ) : null}
                 <br></br>
-                <Row style={{marginBottom: '30px'}}>
-                    <Col md={6} className="text-center">
-                        <Button variant="primary"onClick={this.toggleModal}>
-                            Add Task
-                        </Button>
-                    </Col>
-                    <Col md={6} className="text-center">
-                        <Button variant="danger" onClick={this.toggleRemoveTasks}>
-                            Remove Task
-                        </Button>
-                    </Col>
-                </Row>
-                
+                <Button variant="primary" onClick={this.toggleModal} style={{ marginRight: '25px' }}>
+                    Add Task
+                </Button>
+                <Button variant="danger" onClick={this.toggleRemoveTasks} style={{ marginLeft: '25px' }}>
+                    Remove Task
+                </Button>
+                <br></br>
+
 
                 <Modal show={this.state.show} onHide={this.toggleModal}>
                     <Modal.Header closeButton>
@@ -310,15 +301,15 @@ export default class Tasks extends Component {
                                 <Form.Label>Color</Form.Label>
                                 <br></br>
                                 {this.state.colors.map((color) =>
-                                        <Form.Check 
-                                            name="radio-form"
-                                            type="radio"
-                                            onChange={this.colorChange}
-                                            id={color}
-                                            key={color}
-                                            style={{backgroundColor:color, padding:'25px', margin:'3px'}}
-                                            inline
-                                        />
+                                    <Form.Check
+                                        name="radio-form"
+                                        type="radio"
+                                        onChange={this.colorChange}
+                                        id={color}
+                                        key={color}
+                                        style={{ backgroundColor: color, padding: '25px', margin: '3px' }}
+                                        inline
+                                    />
                                 )}
                             </Form.Group>
                         </Form>
